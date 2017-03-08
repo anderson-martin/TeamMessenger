@@ -1,3 +1,8 @@
+@font-face {
+    font-family: helvetica;
+    src: url(../fonts/helvetica-normal.ttf);
+}
+
 div.row div.list-group button.list-group-item {
     background-color: white;
     color: black;
@@ -43,7 +48,7 @@ div.well {
 }
 
 button.list-group-item{
-    padding: 5px;
+    padding: 15px;
 }
 
 .panel.panel-default{
@@ -80,5 +85,10 @@ ul.nav.nav-pills.nav-stacked.pull-left li a {
 div.col-sm-12.col-md-2.col-lg-2.sidebar {
     padding: 5px;
     margin-left: 15px;
+}
+
+
+p, a, button, label, .btn, .well, h3, h1, h4 {
+    font-family: helvetica;
 }
 
