@@ -1,9 +1,7 @@
 import React from 'react'
-import {ListGroupItem, Panel} from 'react-bootstrap'
 import TaskList from '../components/TaskList'
 import TaskDetailsPanel from '../components/task/TaskDetailsPanel'
 import TaskFilterPanel from '../components/task/TaskFilterPanel'
-import TaskCreationForm from './TaskCreationForm'
 import {connect} from 'react-redux'
 import actions from '../actions/index'
 import {
@@ -12,44 +10,34 @@ import {
     SENDER_GROUP_FILTER,
     RECEIVED_SENT_FILTER
 } from '../constants/taskFilterConstants'
+import style from '../css/general.css'
 import _ from 'lodash'
 class TaskArea extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            selectedTaskId: undefined,
-            createNewTaskSelected: false
-        }
-    }
+	constructor(props) {
+		super(props)
+		this.state = {selectedTaskId: undefined}
+	}
 
-    componentDidMount() {
-        let {fetchTasks} = actions.taskActions
-        let {dispatch} = this.props
-        dispatch(fetchTasks())
-    }
+	componentDidMount() {
+		let {fetchTasks} = actions.taskActions
+		let {dispatch} = this.props
+		dispatch(fetchTasks())
+	}
 
-    selectTask(selectedTaskId) {
-        this.setState({
-            selectedTaskId,
-            createNewTaskSelected: false
-        })
-    }
+	selectTask(selectedTaskId) {
+		this.setState({selectedTaskId})
+	}
 
-    requestTaskDetail() {
-        let {dispatch} = this.props
-        let {fetchTaskDetail} = actions.taskActions
-        dispatch(fetchTaskDetail(this.state.id))
-    }
+	requestTaskDetail() {
+		let {dispatch} = this.props
+		let {fetchTaskDetail} = actions.taskActions
+		dispatch(fetchTaskDetail(this.state.id))
+	}
 
-    onCreateNewTaskSelected() {
-        this.setState({
-            createNewTaskSelected: true
-        })
-    }
-
-    render() {
+	render() {
         const {tasks, users, groups} = this.props
-        const {selectedTaskId, createNewTaskSelected} = this.state
+	    const allIds = Object.keys(tasks.byId)
+        const {selectedTaskId} = this.state
         const selectedTask = tasks.byId[selectedTaskId]
 
         let selectedTaskSender, selectedTaskSenderName
@@ -65,36 +53,19 @@ class TaskArea extends React.Component {
                         <TaskFilterPanel/>
                     </div>
                     <div className="row">
-                        <ListGroupItem
-                            onClick={() => {
-                                this.onCreateNewTaskSelected()
-                            }}>
-                            New task
-                        </ListGroupItem>
-                    </div>
-                    <br/>
-                    <div className="row">
                         <TaskList list={tasks.byId} users={users} groups={groups} taskSelect={(id) => {
                             this.selectTask(id)
                         }}/>
                     </div>
                 </div>
                 <div className="col-sm-7">
-                    {!createNewTaskSelected &&
-                    <TaskDetailsPanel
-                        entity={selectedTask} senderName={selectedTaskSenderName}
-                        requestTaskDetail={() => {
-                            this.requestTaskDetail
-                        }}/>}
-                    {createNewTaskSelected &&
-                    <Panel>
-                        <TaskCreationForm/>
-                    </Panel>
-                    }
+                    <TaskDetailsPanel entity={selectedTask} senderName={selectedTaskSenderName} requestTaskDetail={() => {
+                        this.requestTaskDetail
+                    }}/>
                 </div>
             </div>
         )
-    }
+	}
 }
 function applyReceivedSentFilter(filterValue, userId, tasks) {
     switch (filterValue) {
@@ -153,9 +124,9 @@ const mapProp = (state) => {
     const {users, groups} = state
     const {loggedInUserId} = state.authentication
 
-    let taskData = state.tasks
-    let taskFilter = state.filters.tasks
-    let tasks = applyReceivedSentFilter(taskFilter.receivedSentFilter, loggedInUserId, taskData)
+	let taskData = state.tasks
+	let taskFilter = state.filters.tasks
+	let tasks = applyReceivedSentFilter(taskFilter.receivedSentFilter, loggedInUserId, taskData)
 
     switch (taskFilter.receivedSentFilter) {
         case RECEIVED_SENT_FILTER.RECEIVED:
@@ -167,6 +138,6 @@ const mapProp = (state) => {
             break
     }
 
-    return {tasks, users, groups}
+	return {tasks, users, groups}
 }
 export default connect(mapProp)(TaskArea)

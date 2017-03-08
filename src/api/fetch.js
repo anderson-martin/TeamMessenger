@@ -28,9 +28,3 @@ export function get(url, options) {
 
     return fetchJson({url, auth, method: 'GET'})
 }
-
-export function post(url, options) {
-    const {auth, body} = options
-
-    return fetchJson(({url, auth, method: 'POST', body}))
-}
